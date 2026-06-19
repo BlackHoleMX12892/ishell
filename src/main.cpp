@@ -54,7 +54,7 @@ int main() {
                 if (pid < 0)
                 {
                     std::cout << "Failed to fork process\n";
-                    exit(1);
+                    std::exit(EXIT_FAILURE);
                 } else if (pid == 0) {
                     std::vector<char*> arguments;
                 
@@ -66,7 +66,7 @@ int main() {
                     
                     execvp(arguments[0], arguments.data());
                     perror("Error");
-                    exit(1);
+                    std::exit(EXIT_FAILURE);
                 }
                 waitpid(pid, nullptr, 0);
             }
