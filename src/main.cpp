@@ -29,7 +29,25 @@ void handleBuiltIn(std::vector<std::string> arguments) {
             chdir(arguments[1].c_str());
         }
     } else if (arguments[0] == "export") {
-        setenv(arguments[1].c_str(), arguments[2].c_str(), 1);
+        if (!arguments[1].empty())
+        {
+            bool afterEquals = false;
+            std::string var;
+            std::string val;
+            for (int i = 0; i < arguments[1].size(); i++) {
+                if (arguments.at(1)[i] == '=')
+                {
+                    afterEquals = true;
+                } else {
+                    if (afterEquals == false) {
+                        var.push_back(arguments.at(1)[i]);
+                    } else {
+                        val.push_back(arguments.at(1)[i]);
+                    }
+                }
+            }
+            setenv(var.c_str(), val.c_str(), 1);
+        }
     }
 }
 
