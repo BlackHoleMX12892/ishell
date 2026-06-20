@@ -4,6 +4,7 @@
 #include <vector>
 #include <sstream>
 #include <csignal>
+#include "ConfigHandler/ConfigHandler.hpp"
 
 bool isItBuiltIn(std::string input) {
     if (input == "exit" || input == "help" || input == "cd")
@@ -22,7 +23,11 @@ void handleBuiltIn(std::vector<std::string> arguments) {
         std::cout << "This is a shell designed as an alternative to the bourne-like shells.\n";
         std::cout << "Execute 'exit' to exit the shell.\n";
     } else if (arguments[0] == "cd") {
-        chdir(arguments[1].c_str());
+        if (arguments[1].empty()) {
+            chdir(getenv("HOME"));
+        } else {
+            chdir(arguments[1].c_str());
+        }
     }
 }
 
@@ -39,6 +44,12 @@ std::vector<std::string> handleCommand(std::string command) {
 }
 
 int main() {
+    ConfigHandler config;
+    config.handleConfigFile();
+    for (size_t i = 0; i < config.env.size(); i++)
+    {
+        setenv(config.env.at(i).at(0).c_str(), const_cast<char*>(config.env.at(i).at(1).c_str()), 1);
+    }
     std::signal(SIGINT, SIG_IGN);
     std::string command;
     while(true) {
