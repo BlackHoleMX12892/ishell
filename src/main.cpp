@@ -7,7 +7,7 @@
 #include "EnvHandler/EnvHandler.hpp"
 
 bool isItBuiltIn(std::string input) {
-    if (input == "exit" || input == "help" || input == "cd")
+    if (input == "exit" || input == "help" || input == "cd" || input == "export")
     {
         return true;
     }
@@ -28,6 +28,8 @@ void handleBuiltIn(std::vector<std::string> arguments) {
         } else {
             chdir(arguments[1].c_str());
         }
+    } else if (arguments[0] == "export") {
+        setenv(arguments[1].c_str(), arguments[2].c_str(), 1);
     }
 }
 
