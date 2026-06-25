@@ -3,6 +3,7 @@
 #include <vector>
 #include <filesystem>
 #include <iostream>
+#include <rang.hpp>
 
 using namespace std::literals;
 
@@ -26,6 +27,6 @@ void ConfigHandler::handleConfigFile() {
             }
         }
     } else {
-        std::cout << "No config file has been detected, make sure you create a file named \"ishellconfig.toml\" under the working directory.\n";
+        std::cout << rang::fg::yellow << "No config file has been detected, make sure you create a file named \"ishellconfig.toml\" under the working directory.\n" << rang::fg::reset;
     }
 }

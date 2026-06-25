@@ -13,7 +13,13 @@ FetchContent_Declare(
     GIT_TAG v3.4.0
 )
 
-FetchContent_MakeAvailable(tomlplusplus)
+FetchContent_Declare(
+    rang
+    GIT_REPOSITORY https://github.com/agauniyal/rang.git
+    GIT_TAG v3.3
+)
+
+FetchContent_MakeAvailable(tomlplusplus rang)
 
 add_executable(ishell 
     src/main.cpp
@@ -22,4 +28,4 @@ add_executable(ishell
     src/ConfigHandler/ConfigHandler.cpp
     src/ConfigHandler/ConfigHandler.hpp)
 
-target_link_libraries(ishell PRIVATE tomlplusplus::tomlplusplus)
+target_link_libraries(ishell PRIVATE tomlplusplus::tomlplusplus rang)
