@@ -4,8 +4,9 @@
 #include <vector>
 #include <sstream>
 #include <csignal>
-#include "EnvHandler/EnvHandler.hpp"
 #include <rang.hpp>
+#include <limits.h>
+#include "EnvHandler/EnvHandler.hpp"
 
 bool isItBuiltIn(std::string input) {
     if (input == "exit" || input == "help" || input == "cd" || input == "export")
@@ -69,7 +70,9 @@ int main() {
     std::signal(SIGINT, SIG_IGN);
     std::string command;
     while(true) {
-        std::cout << "ishell v1.0 " << "> ";
+        char buffer[PATH_MAX];
+        getcwd(buffer, sizeof(buffer));
+        std::cout << "ishell v1.0 " << buffer << "> ";
         std::getline(std::cin, command);
         std::vector<std::string> splitcommand = handleCommand(command);
         if (!splitcommand.empty()) {
