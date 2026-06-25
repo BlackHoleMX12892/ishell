@@ -72,7 +72,11 @@ int main() {
     while(true) {
         char buffer[PATH_MAX];
         getcwd(buffer, sizeof(buffer));
-        std::cout << "ishell v1.0 " << buffer << "> ";
+        std::string path = static_cast<std::string>(buffer);
+        if (path == getenv("HOME")) {
+            path = "~";
+        }
+        std::cout << "ishell v1.0 " << rang::fg::green << path << rang::fg::reset << " > ";
         std::getline(std::cin, command);
         std::vector<std::string> splitcommand = handleCommand(command);
         if (!splitcommand.empty()) {
