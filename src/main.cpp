@@ -5,6 +5,7 @@
 #include <sstream>
 #include <csignal>
 #include "EnvHandler/EnvHandler.hpp"
+#include <rang.hpp>
 
 bool isItBuiltIn(std::string input) {
     if (input == "exit" || input == "help" || input == "cd" || input == "export")
@@ -16,7 +17,7 @@ bool isItBuiltIn(std::string input) {
 
 void handleBuiltIn(std::vector<std::string> arguments) {
     if (arguments[0] == "exit") {
-        std::cout << "Thank you for using ishell.\n";
+        std::cout << rang::fg::green << "Thank you for using ishell.\n" << rang::fg::reset;
         std::exit(EXIT_SUCCESS);
     } else if (arguments[0] == "help") {
         std::cout << "Welcome to ishell help menu:\n";
@@ -52,11 +53,11 @@ void handleBuiltIn(std::vector<std::string> arguments) {
 }
 
 std::vector<std::string> handleCommand(std::string command) {
-    std::stringstream ss(command);
+    std::stringstream commandstream(command);
     std::vector<std::string> splitcommand;
     std::string currentargument;
 
-    while (ss >> currentargument) {
+    while (commandstream >> currentargument) {
         splitcommand.push_back(currentargument);
     }
 
@@ -91,7 +92,7 @@ int main() {
                     arguments.push_back(nullptr);
                     
                     execvp(arguments[0], arguments.data());
-                    perror("Error");
+                    perror("\033[31mishell\033[0m");
                     std::exit(EXIT_FAILURE);
                 }
                 waitpid(pid, nullptr, 0);
