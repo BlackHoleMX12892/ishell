@@ -2,16 +2,18 @@
 #include <toml++/toml.hpp>
 #include <vector>
 #include <filesystem>
+#include <iostream>
 
 using namespace std::literals;
 
 std::vector<std::vector<std::string>> ConfigHandler::env;
-std::filesystem::path configFile = "ishellconfig.toml";
 
+char file[] = "ishellconfig.toml";
 
 void ConfigHandler::handleConfigFile() {
+    std::filesystem::path configFile = file;
     if (std::filesystem::exists(configFile)) {
-        auto configfile = toml::parse_file("ishellconfig.toml");
+        auto configfile = toml::parse_file(file);
 
         auto* envtable = configfile["env"].as_table();
 
@@ -23,5 +25,7 @@ void ConfigHandler::handleConfigFile() {
                 }
             }
         }
+    } else {
+        std::cout << "No config file has been detected, make sure you create a file named \"ishellconfig.toml\" under the working directory.\n";
     }
 }
