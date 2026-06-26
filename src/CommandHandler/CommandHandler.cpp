@@ -4,6 +4,7 @@
 #include <vector>
 #include <unistd.h>
 #include <iostream>
+#include <sys/wait.h>
 
 std::vector<std::string> CommandHandler::handleCommand(std::string command) {
     std::stringstream commandstream(command);
