@@ -3,10 +3,8 @@
 #include <vector>
 #include <string>
 
-class ConfigHandler {
-private:
-    
-public:
-    static std::vector<std::vector<std::string>> env;
+namespace ConfigHandler {
+    inline std::vector<std::vector<std::string>> env;
+    inline std::vector<std::string> rc;
     void handleConfigFile();
 };

@@ -26,6 +26,10 @@ add_executable(ishell
     src/EnvHandler/EnvHandler.cpp
     src/EnvHandler/EnvHandler.hpp
     src/ConfigHandler/ConfigHandler.cpp
-    src/ConfigHandler/ConfigHandler.hpp)
+    src/ConfigHandler/ConfigHandler.hpp
+    src/RCHandler/RCHandler.hpp
+    src/RCHandler/RCHandler.cpp
+    src/CommandHandler/CommandHandler.cpp
+    src/CommandHandler/CommandHandler.hpp)
 
 target_link_libraries(ishell PRIVATE tomlplusplus::tomlplusplus rang)

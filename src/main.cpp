@@ -7,6 +7,9 @@
 #include <rang.hpp>
 #include <limits.h>
 #include "EnvHandler/EnvHandler.hpp"
+#include "CommandHandler/CommandHandler.hpp"
+#include "ConfigHandler/ConfigHandler.hpp"
+#include "RCHandler/RCHandler.hpp"
 
 bool isItBuiltIn(std::string input) {
     if (input == "exit" || input == "help" || input == "cd" || input == "export")
@@ -53,20 +56,10 @@ void handleBuiltIn(std::vector<std::string> arguments) {
     }
 }
 
-std::vector<std::string> handleCommand(std::string command) {
-    std::stringstream commandstream(command);
-    std::vector<std::string> splitcommand;
-    std::string currentargument;
-
-    while (commandstream >> currentargument) {
-        splitcommand.push_back(currentargument);
-    }
-
-    return splitcommand;
-}
-
 int main() {
+    ConfigHandler::handleConfigFile();
     EnvHandler::setenvfromconfig();
+    RCHandler::rcfromconfig();
     std::signal(SIGINT, SIG_IGN);
     std::string command;
     while(true) {
@@ -78,31 +71,13 @@ int main() {
         }
         std::cout << "ishell v1.0 " << rang::fg::green << path << rang::fg::reset << " > ";
         std::getline(std::cin, command);
-        std::vector<std::string> splitcommand = handleCommand(command);
+        std::vector<std::string> splitcommand = CommandHandler::handleCommand(command);
         if (!splitcommand.empty()) {
             if (isItBuiltIn(splitcommand[0]) == true)
             {
                 handleBuiltIn(splitcommand);
             } else {
-                pid_t pid = fork();
-                if (pid < 0)
-                {
-                    std::cout << "Failed to fork process\n";
-                    std::exit(EXIT_FAILURE);
-                } else if (pid == 0) {
-                    std::vector<char*> arguments;
-                
-                    for (size_t i = 0; i < splitcommand.size(); i++)
-                    {
-                        arguments.push_back(const_cast<char*>(splitcommand[i].c_str()));
-                    }
-                    arguments.push_back(nullptr);
-                    
-                    execvp(arguments[0], arguments.data());
-                    perror("\033[31mishell\033[0m");
-                    std::exit(EXIT_FAILURE);
-                }
-                waitpid(pid, nullptr, 0);
+                CommandHandler::executeExternalCommand(splitcommand);
             }
         }
     }
