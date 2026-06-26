@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <iostream>
 #include <sys/wait.h>
+#include <rang.hpp>
 
 std::vector<std::string> CommandHandler::handleCommand(std::string command) {
     std::stringstream commandstream(command);
@@ -36,4 +37,49 @@ void CommandHandler::executeExternalCommand(std::vector<std::string> splitcomman
         std::exit(EXIT_FAILURE);
     }
     waitpid(pid, nullptr, 0);
+}
+
+void CommandHandler::executeInternalCommand(std::vector<std::string> splitcommand) {
+    if (splitcommand[0] == "exit") {
+        std::cout << rang::fg::green << "Thank you for using ishell.\n" << rang::fg::reset;
+        std::exit(EXIT_SUCCESS);
+    } else if (splitcommand[0] == "help") {
+        std::cout << "Welcome to ishell help menu:\n";
+        std::cout << "This is a shell designed as an alternative to the bourne-like shells.\n";
+        std::cout << "Execute 'exit' to exit the shell.\n";
+    } else if (splitcommand[0] == "cd") {
+        if (splitcommand[1].empty()) {
+            chdir(getenv("HOME"));
+        } else {
+            chdir(splitcommand[1].c_str());
+        }
+    } else if (splitcommand[0] == "export") {
+        if (!splitcommand[1].empty())
+        {
+            bool afterEquals = false;
+            std::string var;
+            std::string val;
+            for (int i = 0; i < splitcommand[1].size(); i++) {
+                if (splitcommand.at(1)[i] == '=')
+                {
+                    afterEquals = true;
+                } else {
+                    if (afterEquals == false) {
+                        var.push_back(splitcommand.at(1)[i]);
+                    } else {
+                        val.push_back(splitcommand.at(1)[i]);
+                    }
+                }
+            }
+            setenv(var.c_str(), val.c_str(), 1);
+        }
+    }
+}
+
+bool CommandHandler::checkIfInternal(std::string input) {
+    if (input == "exit" || input == "help" || input == "cd" || input == "export")
+    {
+        return true;
+    }
+    return false;
 }
