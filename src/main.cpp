@@ -69,7 +69,7 @@ int main() {
         if (path == getenv("HOME")) {
             path = "~";
         }
-        std::cout << "ishell v1.0 " << rang::fg::green << path << rang::fg::reset << " > ";
+        std::cout << "ishell v0.1.0 " << rang::fg::green << path << rang::fg::reset << " > ";
         std::getline(std::cin, command);
         std::vector<std::string> splitcommand = CommandHandler::handleCommand(command);
         if (!splitcommand.empty()) {
