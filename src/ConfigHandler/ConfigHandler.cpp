@@ -35,9 +35,7 @@ void ConfigHandler::handleConfigFile() {
             for (auto&& [key, value] : *rctable) {
                 if (value.value<std::string>())
                 {
-                    if (std::string(key) == "run") {
-                        rc.push_back(std::string(value.value_or(""sv)));
-                    }
+                    rc.push_back(std::string(value.value_or(""sv)));
                 }
             }
         }
