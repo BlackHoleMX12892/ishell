@@ -3,5 +3,5 @@
 #include <string>
 
 namespace CWDHandler {
-    std::string getPath();
+    std::string getFormattedPath();
 }
