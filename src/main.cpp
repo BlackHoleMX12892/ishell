@@ -18,8 +18,7 @@ int main() {
     std::signal(SIGINT, SIG_IGN);
     std::string command;
     while(true) {
-        std::string path = CWDHandler::getPath();
-        std::cout << "ishell v0.1.0 " << rang::fg::green << path << rang::fg::reset << " > ";
+        std::cout << "ishell v0.1.0 " << rang::fg::green << CWDHandler::getPath() << rang::fg::reset << " > ";
         std::getline(std::cin, command);
         std::vector<std::string> splitcommand = CommandHandler::handleCommand(command);
         if (!splitcommand.empty()) {
