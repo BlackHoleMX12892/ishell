@@ -9,6 +9,7 @@
 #include "CommandHandler/CommandHandler.hpp"
 #include "ConfigHandler/ConfigHandler.hpp"
 #include "RCHandler/RCHandler.hpp"
+#include "CWDHandler/CWDHandler.hpp"
 
 int main() {
     ConfigHandler::handleConfigFile();
@@ -17,12 +18,7 @@ int main() {
     std::signal(SIGINT, SIG_IGN);
     std::string command;
     while(true) {
-        char buffer[PATH_MAX];
-        getcwd(buffer, sizeof(buffer));
-        std::string path = static_cast<std::string>(buffer);
-        if (path == getenv("HOME")) {
-            path = "~";
-        }
+        std::string path = CWDHandler::getPath();
         std::cout << "ishell v0.1.0 " << rang::fg::green << path << rang::fg::reset << " > ";
         std::getline(std::cin, command);
         std::vector<std::string> splitcommand = CommandHandler::handleCommand(command);

@@ -30,6 +30,8 @@ add_executable(ishell
     src/RCHandler/RCHandler.hpp
     src/RCHandler/RCHandler.cpp
     src/CommandHandler/CommandHandler.cpp
-    src/CommandHandler/CommandHandler.hpp)
+    src/CommandHandler/CommandHandler.hpp
+    src/CWDHandler/CWDHandler.hpp
+    src/CWDHandler/CWDHandler.cpp)
 
 target_link_libraries(ishell PRIVATE tomlplusplus::tomlplusplus rang)
