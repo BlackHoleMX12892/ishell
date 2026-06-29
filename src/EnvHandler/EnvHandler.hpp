@@ -4,6 +4,6 @@
 #include <string>
 
 namespace EnvHandler {
-    void setenvfromconfig(std::vector<std::vector<std::string>> env);
+    void setEnvFromConfig(std::vector<std::vector<std::string>> env);
 }
 

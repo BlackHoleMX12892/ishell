@@ -10,17 +10,17 @@
 #include "ConfigHandler/ConfigHandler.hpp"
 #include "RCHandler/RCHandler.hpp"
 #include "CWDHandler/CWDHandler.hpp"
+#include "LineEditor/LineEditor.hpp"
 
 int main() {
     ConfigHandler config;
     config.handleConfigFile();
-    EnvHandler::setenvfromconfig(config.env);
-    RCHandler::rcfromconfig(config.rc);
-    std::signal(SIGINT, SIG_IGN);
-    std::string command;
+    EnvHandler::setEnvFromConfig(config.env);
+    RCHandler::rcFromConfig(config.rc);
     while(true) {
-        std::cout << "ishell v0.2.0 " << rang::fg::green << CWDHandler::getFormattedPath() << rang::fg::reset << " > ";
-        std::getline(std::cin, command);
+        std::cout << "ishell v0.2.0 " << rang::fg::green << CWDHandler::getFormattedPath() << rang::fg::reset << " > " << std::flush;
+        LineEditor lineeditor;
+        std::string command = lineeditor.readLine();
         std::vector<std::string> splitcommand = CommandHandler::handleCommand(command);
         if (!splitcommand.empty()) {
             if (CommandHandler::checkIfInternal(splitcommand[0]) == true)

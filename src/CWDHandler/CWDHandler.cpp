@@ -29,6 +29,7 @@ std::string CWDHandler::getFormattedPath() { // will change to getFormattedPath(
         }
     }
 
+
     if (matches == homestr.size())
     {
         for (size_t i = 0; i < output.size() - homestr.size() + 1; i++)

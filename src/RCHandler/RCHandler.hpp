@@ -4,5 +4,5 @@
 #include <string>
 
 namespace RCHandler {
-    void rcfromconfig(std::vector<std::string> rc);
+    void rcFromConfig(std::vector<std::string> rc);
 }
