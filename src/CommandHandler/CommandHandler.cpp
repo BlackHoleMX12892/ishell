@@ -44,9 +44,9 @@ void CommandHandler::executeInternalCommand(std::vector<std::string> splitcomman
         std::cout << rang::fg::green << "Thank you for using ishell.\n" << rang::fg::reset;
         std::exit(EXIT_SUCCESS);
     } else if (splitcommand[0] == "help") {
-        std::cout << "Welcome to ishell help menu:\n";
+        std::cout << rang::fg::green << "Welcome to ishell help menu:\n" << rang::fg::reset;
         std::cout << "This is a shell designed as an alternative to the bourne-like shells.\n";
-        std::cout << "Execute 'exit' to exit the shell.\n";
+        std::cout << "Execute" << rang::fg::red << " \"exit\" " << rang::fg::reset << "to exit the shell.\n";
     } else if (splitcommand[0] == "cd") {
         if (splitcommand[1].empty()) {
             chdir(getenv("HOME"));

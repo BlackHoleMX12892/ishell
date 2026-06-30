@@ -26,7 +26,7 @@ void LineEditor::disableRaw() {
 std::string LineEditor::readLine() {
     enableRaw();
     char c;
-    std::stringstream command;
+    std::string command;
     while (true)
     {
         ssize_t character = read(STDIN_FILENO, &c, 1);
@@ -35,10 +35,15 @@ std::string LineEditor::readLine() {
             std::cout << "\n\r" << std::flush;
             disableRaw();
             break;
+        } else if (character == 1 && (c == '\b' || c == 127)) {
+            if (!command.empty()) {
+                std::cout << "\b \b" << std::flush;
+                command.pop_back();
+            }
         } else if (character == 1 && std::isprint(c)) {
             std::cout << c << std::flush;
-            command << c;
+            command.push_back(c);
         }
     }
-    return command.str();
+    return command;
 }
