@@ -26,6 +26,7 @@ void LineEditor::disableRaw() {
 std::string LineEditor::readLine() {
     enableRaw();
     char c;
+    int position = 0;
     std::string command;
     while (true)
     {
@@ -33,16 +34,46 @@ std::string LineEditor::readLine() {
         if (character == 1 && c == '\r')
         {
             std::cout << "\n\r" << std::flush;
+            //std::cout << command << std::flush;
             disableRaw();
             break;
         } else if (character == 1 && (c == '\b' || c == 127)) {
             if (!command.empty()) {
                 std::cout << "\b \b" << std::flush;
                 command.pop_back();
+                position--;
+            }
+        } else if (character == 1 && c == '\033') {
+            if (read(STDIN_FILENO, &c, 1) == 1 && c == '[') {
+                ssize_t character2 = read(STDIN_FILENO, &c, 1);
+                if (character2 == 1 && c == 'D') {
+                    std::cout << "\033[1D" << std::flush;
+                    position--;
+                } else if (character2 == 1 && c == 'C') {
+                    std::cout << "\033[1C" << std::flush;
+                    position++;
+                } else if (character2 == 1 && c == 'A') {
+                    //std::cout << "up" << std::flush;
+                } else if (character2 == 1 && c == 'B') {
+                    //std::cout << "down" << std::flush;
+                }
             }
         } else if (character == 1 && std::isprint(c)) {
-            std::cout << c << std::flush;
-            command.push_back(c);
+            if (position == (command.size())) { //position 0 only happens when no character
+                std::cout << c << std::flush;
+                command.push_back(c);
+                position++;
+            } else {
+                std::stringstream backcharacters;
+                command.insert(position, 1, c);
+                position++;
+                for (int i = 0; i < command.size() - position; i++)
+                {
+                    backcharacters << "\033[1D";
+                }
+                std::cout << command.substr(position - 1, command.size()) << std::flush;
+                std::cout << backcharacters.str() << std::flush; 
+            }
         }
     }
     return command;
