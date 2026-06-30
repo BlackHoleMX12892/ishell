@@ -6,6 +6,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <cctype>
 
 struct termios original;
 
@@ -34,7 +35,7 @@ std::string LineEditor::readLine() {
             std::cout << "\n\r" << std::flush;
             disableRaw();
             break;
-        } else if (character == 1) {
+        } else if (character == 1 && std::isprint(c)) {
             std::cout << c << std::flush;
             command << c;
         }

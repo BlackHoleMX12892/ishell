@@ -9,10 +9,10 @@
 using namespace std::literals;
 
 void ConfigHandler::handleConfigFile() {
-    std::string file = "ishellconfig.toml";
+    std::string file = ".ishellconfig.toml";
     char* home = getenv("HOME");
     if (home != nullptr) {
-        file = static_cast<std::string>(home) + "/ishellconfig.toml";
+        file = static_cast<std::string>(home) + "/" + file;
     }
     std::filesystem::path configFile = file.c_str();
     if (std::filesystem::exists(configFile)) {
