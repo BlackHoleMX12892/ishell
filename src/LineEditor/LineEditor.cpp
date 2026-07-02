@@ -7,6 +7,7 @@
 #include <sstream>
 #include <string>
 #include <cctype>
+#include "../HistoryHandler/HistoryHandler.hpp"
 
 struct termios original;
 
@@ -28,6 +29,8 @@ std::string LineEditor::readLine() {
     char c;
     int position = 0;
     std::string command;
+    HistoryHandler historyhandler;
+    historyhandler.handleHome();
     while (true)
     {
         ssize_t character = read(STDIN_FILENO, &c, 1);
@@ -71,9 +74,17 @@ std::string LineEditor::readLine() {
                         position++;
                     }
                 } else if (character2 == 1 && c == 'A') {
-                    //std::cout << "up" << std::flush;
+                    std::string previous = historyhandler.getPrevious();
+                    std::cout << clearCommand(command, position) << std::flush;
+                    std::cout << previous << std::flush;
+                    command = previous;
+                    position = command.size();
                 } else if (character2 == 1 && c == 'B') {
-                    //std::cout << "down" << std::flush;
+                    std::string next = historyhandler.getNext();
+                    std::cout << clearCommand(command, position) << std::flush;
+                    std::cout << next << std::flush;
+                    command = next;
+                    position = command.size();
                 }
             }
         } else if (character == 1 && std::isprint(c)) {
@@ -95,4 +106,24 @@ std::string LineEditor::readLine() {
         }
     }
     return command;
+}
+
+std::string LineEditor::clearCommand(std::string command, int position) {
+    std::stringstream firstbackcharacters;
+    std::stringstream backcharacters;
+    std::stringstream spacecharacters;
+
+    for (size_t i = 0; i < position; i++)
+    {
+        firstbackcharacters << "\033[1D";
+    }
+    
+
+    for (size_t i = 0; i < command.size(); i++)
+    {
+        backcharacters << "\033[1D";
+        spacecharacters << " ";
+    }
+
+    return firstbackcharacters.str() + spacecharacters.str() + backcharacters.str();
 }

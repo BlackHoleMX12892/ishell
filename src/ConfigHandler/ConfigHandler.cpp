@@ -16,6 +16,7 @@ void ConfigHandler::handleConfigFile() {
     }
     std::filesystem::path configFile = file.c_str();
     if (std::filesystem::exists(configFile)) {
+        // bad variable name - already used it before but with a capital f
         auto configfile = toml::parse_file(file.c_str());
 
         auto* envtable = configfile["env"].as_table();
