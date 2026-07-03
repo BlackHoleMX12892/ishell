@@ -19,7 +19,7 @@ int main() {
     EnvHandler::setEnvFromConfig(config.env());
     RCHandler::rcFromConfig(config.rc());
     while(true) {
-        std::cout << "ishell v0.3.0 " << rang::fg::green << CWDHandler::getFormattedPath() << rang::fg::reset << " > " << std::flush;
+        std::cout << "ishell v0.3.1 " << rang::fg::green << CWDHandler::getFormattedPath() << rang::fg::reset << " > " << std::flush;
         LineEditor lineeditor;
         std::string command = lineeditor.readLine();
         HistoryHandler historyhandler;
