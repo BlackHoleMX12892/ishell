@@ -1,4 +1,5 @@
 #include "HistoryHandler.hpp"
+#include "../ConfigHandler/ConfigHandler.hpp"
 #include <string>
 #include <fstream>
 #include <iostream>
@@ -12,6 +13,33 @@ void HistoryHandler::handleHome() {
 }
 
 void HistoryHandler::saveToFile(std::string input) {
+    int lines = linecount();
+    ConfigHandler confighandler;
+    confighandler.handleConfigFile();
+    
+    if (lines >= confighandler.maxcommands && confighandler.maxcommands > 0) {
+        std::ifstream inputstream(file);
+        std::vector<std::string> commands; // this could actually become session-exclusive and then write to disk.
+        std::string command;
+
+        if (inputstream.is_open()) {
+            while (std::getline(inputstream, command)) {
+                commands.push_back(command);
+            }
+            inputstream.close();
+        }
+
+        std::ofstream outputstream(file, std::ios::trunc);
+
+        if (outputstream.is_open()) {
+            for (size_t i = lines - confighandler.maxcommands; i < commands.size(); i++)
+            {
+                outputstream << commands[i] << '\n';
+            }
+            outputstream.close();
+        }
+    }
+    
     if (!input.empty())
     {
         std::ofstream outputstream(file, std::ios::app);

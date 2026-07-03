@@ -40,6 +40,20 @@ void ConfigHandler::handleConfigFile() {
                 }
             }
         }
+
+        auto* historytable = configfile["history"].as_table();
+
+        if (historytable)
+        {
+            for (auto&& [key, value] : *historytable)
+            {
+                if (key == "max-commands" && value.value<int>())
+                {
+                    maxcommands = value.value_or(50);
+                }
+            }
+        }
+        
     } else {
         std::cout << rang::fg::yellow << "No config file has been detected, make sure you create a file named \"ishellconfig.toml\" under the home or working directory.\n" << rang::fg::reset;
     }
