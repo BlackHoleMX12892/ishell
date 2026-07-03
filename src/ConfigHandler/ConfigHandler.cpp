@@ -47,7 +47,7 @@ std::vector<std::string> ConfigHandler::rc() {
             for (auto&& [key, value] : *rctable) {
                 if (value.value<std::string>())
                 {
-                    temprc.push_back(std::string(value.value_or(""sv)));
+                    temprc.push_back(value.value_or(""s));
                 }
             }
         }
@@ -70,7 +70,7 @@ std::vector<std::vector<std::string>> ConfigHandler::env() {
         if (envtable) {
             for (auto&& [key, value] : *envtable) {
                 if (value.value<std::string>()) {
-                    std::vector<std::string> temp = {std::string(key), std::string(value.value_or(""sv))};
+                    std::vector<std::string> temp = {std::string(key), value.value_or(""s)};
                     tempenv.push_back(temp);
                 }
             }
