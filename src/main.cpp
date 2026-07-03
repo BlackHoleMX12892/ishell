@@ -16,8 +16,8 @@
 int main() {
     ConfigHandler config;
     config.handleConfigFile();
-    EnvHandler::setEnvFromConfig(config.env);
-    RCHandler::rcFromConfig(config.rc);
+    EnvHandler::setEnvFromConfig(config.env());
+    RCHandler::rcFromConfig(config.rc());
     while(true) {
         std::cout << "ishell v0.3.0 " << rang::fg::green << CWDHandler::getFormattedPath() << rang::fg::reset << " > " << std::flush;
         LineEditor lineeditor;

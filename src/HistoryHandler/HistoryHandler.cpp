@@ -17,7 +17,7 @@ void HistoryHandler::saveToFile(std::string input) {
     ConfigHandler confighandler;
     confighandler.handleConfigFile();
     
-    if (lines >= confighandler.maxcommands && confighandler.maxcommands > 0) {
+    if (lines >= confighandler.maxcommands() && confighandler.maxcommands() > 0) {
         std::ifstream inputstream(file);
         std::vector<std::string> commands; // this could actually become session-exclusive and then write to disk.
         std::string command;
@@ -32,7 +32,7 @@ void HistoryHandler::saveToFile(std::string input) {
         std::ofstream outputstream(file, std::ios::trunc);
 
         if (outputstream.is_open()) {
-            for (size_t i = lines - confighandler.maxcommands; i < commands.size(); i++)
+            for (size_t i = lines - confighandler.maxcommands(); i < commands.size(); i++)
             {
                 outputstream << commands[i] << '\n';
             }
