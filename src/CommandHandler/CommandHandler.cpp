@@ -83,3 +83,14 @@ bool CommandHandler::checkIfInternal(std::string input) {
     }
     return false;
 }
+
+void CommandHandler::executeCommand(std::string command) {
+    std::vector<std::string> splitcommand = handleCommand(command);
+    if (!splitcommand.empty()) {
+        if (checkIfInternal(splitcommand[0]) == true) {
+            executeInternalCommand(splitcommand);
+        } else {
+            executeExternalCommand(splitcommand);
+        }
+    }
+}

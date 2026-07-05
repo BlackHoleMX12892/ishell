@@ -25,13 +25,7 @@ int main() {
         HistoryHandler historyhandler;
         historyhandler.handleHome();
         historyhandler.saveToFile(command);
-        std::vector<std::string> splitcommand = CommandHandler::handleCommand(command);
-        if (!splitcommand.empty()) {
-            if (CommandHandler::checkIfInternal(splitcommand[0]) == true) {
-                CommandHandler::executeInternalCommand(splitcommand);
-            } else {
-                CommandHandler::executeExternalCommand(splitcommand);
-            }
-        }
+        CommandHandler commandhandler;
+        commandhandler.executeCommand(command);
     }
 }
