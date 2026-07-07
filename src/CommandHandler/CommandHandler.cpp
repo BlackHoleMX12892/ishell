@@ -6,6 +6,7 @@
 #include <iostream>
 #include <sys/wait.h>
 #include <rang.hpp>
+#include "../HistoryHandler/HistoryHandler.hpp"
 
 std::vector<std::string> CommandHandler::handleCommand(std::string command) {
     std::stringstream commandstream(command);
@@ -73,11 +74,24 @@ void CommandHandler::executeInternalCommand(std::vector<std::string> splitcomman
             }
             setenv(var.c_str(), val.c_str(), 1);
         }
+    } else if (splitcommand[0] == "history") {
+        if (!splitcommand[1].empty() && splitcommand[1] == "-n")
+        {
+            std::stringstream output;
+            HistoryHandler historyhandler;
+            for (int i = 1; i <= std::stoi(splitcommand[2]); i++) {
+                output << " " << i << " " << historyhandler.getPrevious() << '\n';
+            }
+            std::cout << output.str();
+        } else {
+            std::cout << "History command:\n";
+            std::cout << " -n [number] Print the last commands.\n";
+        }
     }
 }
 
 bool CommandHandler::checkIfInternal(std::string input) {
-    if (input == "exit" || input == "help" || input == "cd" || input == "export")
+    if (input == "exit" || input == "help" || input == "cd" || input == "export" || input == "history")
     {
         return true;
     }

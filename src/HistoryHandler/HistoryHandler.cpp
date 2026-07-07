@@ -19,7 +19,7 @@ void HistoryHandler::saveToFile(std::string input) {
     
     if (lines >= confighandler.maxcommands() && confighandler.maxcommands() > 0) {
         std::ifstream inputstream(file);
-        std::vector<std::string> commands; // this could actually become session-exclusive and then write to disk.
+        std::vector<std::string> commands;
         std::string command;
 
         if (inputstream.is_open()) {
@@ -65,7 +65,7 @@ std::string HistoryHandler::getFromFile(int line) {
         return output;
     }
 
-    return "oops";
+    return "";
 }
 
 int HistoryHandler::linecount() {
