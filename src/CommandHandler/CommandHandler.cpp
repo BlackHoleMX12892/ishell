@@ -172,13 +172,39 @@ bool CommandHandler::checkIfInternal(std::string input) {
 }
 
 void CommandHandler::executeCommand(std::string command) {
-    // need to make this a parser so it can execute pipes
-    std::vector<std::string> splitcommand = handleCommand(command);
-    if (!splitcommand.empty()) {
-        if (checkIfInternal(splitcommand[0]) == true) {
-            executeInternalCommand(splitcommand);
+    // temporal solution, need to implement something that can handle multiple cases like "echo $HOME"
+
+    bool afterSymbol = false;
+    std::stringstream command1;
+    std::stringstream command2;
+
+    for (int i = 0; i < command.size(); i++) {
+        if (command[i] == '|')
+        {
+            afterSymbol = true;
         } else {
-            executeExternalCommand(splitcommand);
+            if (afterSymbol == false) {
+                command1 << command[i];
+            } else {
+                command2 << command[i];
+            }
         }
     }
+
+    std::vector<std::string> splitcommand1 = handleCommand(command1.str());
+    std::vector<std::string> splitcommand2 = handleCommand(command2.str());
+
+    if (!splitcommand2.empty())
+    {
+        executePipe(splitcommand1, splitcommand2);
+    } else {
+        if (!splitcommand1.empty()) {
+            if (checkIfInternal(splitcommand1[0]) == true) {
+                executeInternalCommand(splitcommand1);
+            } else {
+                executeExternalCommand(splitcommand1);
+            }
+        }
+    }
+
 }
