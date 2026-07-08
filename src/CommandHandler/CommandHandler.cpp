@@ -24,7 +24,6 @@ void CommandHandler::executeExternalCommand(std::vector<std::string> splitcomman
     pid_t pid = fork();
     if (pid < 0) {
         std::cout << "Failed to fork process\n";
-        std::exit(EXIT_FAILURE);
     } else if (pid == 0) {
         std::vector<char*> arguments;
             
@@ -34,10 +33,84 @@ void CommandHandler::executeExternalCommand(std::vector<std::string> splitcomman
         arguments.push_back(nullptr);
                 
         execvp(arguments[0], arguments.data());
+
         perror("\033[31mishell\033[0m");
         std::exit(EXIT_FAILURE);
     }
     waitpid(pid, nullptr, 0);
+}
+
+int CommandHandler::executePipe(std::vector<std::string> splitcommand1, std::vector<std::string> splitcommand2) {
+
+    int pipefd[2];
+
+    if (pipe(pipefd) == -1)
+    {
+        perror("\033[31mishell\033[0m");
+        return 1;
+    }
+
+    pid_t pid1 = fork();
+
+    if (pid1 < 0) {
+        std::cout << "Failed to fork process\n";
+        return 1;
+    } else if (pid1 == 0) {
+        if (dup2(pipefd[1], STDOUT_FILENO) == -1) {
+            perror("\033[31mishell\033[0m");
+            std::exit(EXIT_FAILURE);
+        }
+
+        close(pipefd[0]);
+        close(pipefd[1]);
+
+        std::vector<char*> arguments;
+        
+        for (size_t i = 0; i < splitcommand1.size(); i++) {
+            arguments.push_back(const_cast<char*>(splitcommand1[i].c_str()));
+        }
+        arguments.push_back(nullptr);
+
+        execvp(arguments[0], arguments.data());
+
+        perror("\033[31mishell\033[0m");
+        std::exit(EXIT_FAILURE);
+    }
+
+    pid_t pid2 = fork();
+
+    if (pid2 < 0) {
+        std::cout << "Failed to fork process\n";
+        return 1;
+    } else if (pid2 == 0) {
+        if (dup2(pipefd[0], STDIN_FILENO) == -1) {
+            perror("\033[31mishell\033[0m");
+            std::exit(EXIT_FAILURE);
+        }
+
+        close(pipefd[0]);
+        close(pipefd[1]);
+
+        std::vector<char*> arguments;
+        
+        for (size_t i = 0; i < splitcommand2.size(); i++) {
+            arguments.push_back(const_cast<char*>(splitcommand2[i].c_str()));
+        }
+        arguments.push_back(nullptr);
+
+        execvp(arguments[0], arguments.data());
+
+        perror("\033[31mishell\033[0m");
+        std::exit(EXIT_FAILURE);
+    }
+    
+    close(pipefd[0]);
+    close(pipefd[1]);
+
+    waitpid(pid1, nullptr, 0);
+    waitpid(pid2, nullptr, 0);
+
+    return 0;
 }
 
 void CommandHandler::executeInternalCommand(std::vector<std::string> splitcommand) {
@@ -99,6 +172,7 @@ bool CommandHandler::checkIfInternal(std::string input) {
 }
 
 void CommandHandler::executeCommand(std::string command) {
+    // need to make this a parser so it can execute pipes
     std::vector<std::string> splitcommand = handleCommand(command);
     if (!splitcommand.empty()) {
         if (checkIfInternal(splitcommand[0]) == true) {
