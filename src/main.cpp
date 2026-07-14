@@ -13,12 +13,12 @@ int main() {
     ConfigHandler::handleConfigFile();
     HistoryHandler historyhandler;
     HistoryHandler::handleHome();
-    EnvHandler::setEnvFromConfig(); // i shouldnt have to pass an argument - done
-    RCHandler::rcFromConfig(); // here also i shouldn't have to pass an argument - done
+    EnvHandler::setEnvFromConfig();
+    RCHandler::rcFromConfig();
     LineEditor lineeditor;
     CommandHandler commandhandler;
     while(true) {
-        std::cout << "ishell v0.4.0 " << rang::fg::green << CWDHandler::getFormattedPath() << rang::fg::reset << " > " << std::flush;
+        std::cout << "ishell v0.3.2 " << rang::fg::green << CWDHandler::getFormattedPath() << rang::fg::reset << " > " << std::flush;
         std::string command = lineeditor.readLine();
         historyhandler.saveToFile(command);
         commandhandler.executeCommand(command);
