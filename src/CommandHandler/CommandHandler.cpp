@@ -118,7 +118,7 @@ void CommandHandler::executeInternalCommand(std::vector<std::string> splitcomman
         std::cout << "This is a shell designed as an alternative to the bourne-like shells.\n";
         std::cout << "Execute" << rang::fg::red << " \"exit\" " << rang::fg::reset << "to exit the shell.\n";
     } else if (splitcommand[0] == "cd") {
-        if (splitcommand[1].empty()) {
+        if (splitcommand.size() == 1) {
             chdir(getenv("HOME"));
         } else {
             if (chdir(splitcommand[1].c_str()) == -1) {
