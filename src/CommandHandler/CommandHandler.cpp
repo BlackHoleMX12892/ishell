@@ -6,6 +6,7 @@
 #include <iostream>
 #include <sys/wait.h>
 #include <rang.hpp>
+#include <filesystem>
 #include "../HistoryHandler/HistoryHandler.hpp"
 
 std::vector<std::string> CommandHandler::handleCommand(std::string command) {
@@ -120,7 +121,12 @@ void CommandHandler::executeInternalCommand(std::vector<std::string> splitcomman
         if (splitcommand[1].empty()) {
             chdir(getenv("HOME"));
         } else {
-            chdir(splitcommand[1].c_str());
+            std::filesystem::path pathtochdirto = splitcommand[1].c_str();
+            if (std::filesystem::exists(pathtochdirto)) {
+                chdir(splitcommand[1].c_str());
+            } else {
+                perror("\033[31mishell\033[0m");
+            }
         }
     } else if (splitcommand[0] == "export") {
         if (!splitcommand[1].empty())
