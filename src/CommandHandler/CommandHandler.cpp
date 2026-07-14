@@ -121,10 +121,7 @@ void CommandHandler::executeInternalCommand(std::vector<std::string> splitcomman
         if (splitcommand[1].empty()) {
             chdir(getenv("HOME"));
         } else {
-            std::filesystem::path pathtochdirto = splitcommand[1].c_str();
-            if (std::filesystem::exists(pathtochdirto)) {
-                chdir(splitcommand[1].c_str());
-            } else {
+            if (chdir(splitcommand[1].c_str()) == -1) {
                 perror("\033[31mishell\033[0m");
             }
         }
