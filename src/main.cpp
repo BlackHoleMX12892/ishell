@@ -13,8 +13,8 @@ int main() {
     ConfigHandler::handleConfigFile();
     HistoryHandler historyhandler;
     HistoryHandler::handleHome();
-    EnvHandler::setEnvFromConfig(config.env()); // i shouldnt have to pass an argument
-    RCHandler::rcFromConfig(config.rc()); // here also i shouldn't have to pass an argument
+    EnvHandler::setEnvFromConfig(); // i shouldnt have to pass an argument - done
+    RCHandler::rcFromConfig(); // here also i shouldn't have to pass an argument - done
     LineEditor lineeditor;
     CommandHandler commandhandler;
     while(true) {
