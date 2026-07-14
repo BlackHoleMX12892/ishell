@@ -34,15 +34,13 @@ std::string LineEditor::readLine() {
     while (true)
     {
         ssize_t character = read(STDIN_FILENO, &c, 1);
-        if (character == 1 && c == '\r')
-        {
+        if (character == 1 && c == '\r') {
             std::cout << "\n\r" << std::flush;
             disableRaw();
             break;
         } else if (character == 1 && (c == '\b' || c == 127)) {
             if (!command.empty()) {
-                if (position == command.size())
-                {
+                if (position == command.size()) {
                     std::cout << "\b \b" << std::flush;
                     command.pop_back();
                     position--;
@@ -50,8 +48,7 @@ std::string LineEditor::readLine() {
                     std::stringstream backcharacters;
                     command.erase(position - 1, 1);
                     position--;
-                    for (int i = 0; i < command.size() - position; i++)
-                    {
+                    for (int i = 0; i < command.size() - position; i++) {
                         backcharacters << "\033[1D";
                     }
                     std::cout << "\b \b" << command.substr(position, command.size()) << std::flush;
@@ -68,8 +65,7 @@ std::string LineEditor::readLine() {
                         position--;
                     }
                 } else if (character2 == 1 && c == 'C') {
-                    if (position < command.size())
-                    {
+                    if (position < command.size()) {
                         std::cout << "\033[1C" << std::flush;
                         position++;
                     }
@@ -96,8 +92,7 @@ std::string LineEditor::readLine() {
                 std::stringstream backcharacters;
                 command.insert(position, 1, c);
                 position++;
-                for (int i = 0; i < command.size() - position; i++)
-                {
+                for (int i = 0; i < command.size() - position; i++) {
                     backcharacters << "\033[1D";
                 }
                 std::cout << command.substr(position - 1, command.size()) << std::flush;
@@ -113,14 +108,12 @@ std::string LineEditor::clearCommand(std::string command, int position) {
     std::stringstream backcharacters;
     std::stringstream spacecharacters;
 
-    for (size_t i = 0; i < position; i++)
-    {
+    for (size_t i = 0; i < position; i++) {
         firstbackcharacters << "\033[1D";
     }
     
 
-    for (size_t i = 0; i < command.size(); i++)
-    {
+    for (size_t i = 0; i < command.size(); i++) {
         backcharacters << "\033[1D";
         spacecharacters << " ";
     }

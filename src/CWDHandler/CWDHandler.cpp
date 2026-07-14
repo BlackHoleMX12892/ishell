@@ -23,19 +23,15 @@ std::string CWDHandler::getFormattedPath() { // will change to getFormattedPath(
     int matches = 0;
 
     for (size_t i = 0; i < homestr.size(); i++) {
-        if (output[i] == homestr[i])
-        {
+        if (output[i] == homestr[i]) {
             matches++;
         }
     }
 
 
-    if (matches == homestr.size())
-    {
-        for (size_t i = 0; i < output.size() - homestr.size() + 1; i++)
-        {
-            if (i == 0)
-            {
+    if (matches == homestr.size()) {
+        for (size_t i = 0; i < output.size() - homestr.size() + 1; i++) {
+            if (i == 0) {
                 outputstream << '~';
                 continue;
             }

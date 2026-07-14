@@ -40,21 +40,19 @@ void CommandHandler::executeExternalCommand(std::vector<std::string> splitcomman
     waitpid(pid, nullptr, 0);
 }
 
-int CommandHandler::executePipe(std::vector<std::string> splitcommand1, std::vector<std::string> splitcommand2) {
+void CommandHandler::executePipe(std::vector<std::string> splitcommand1, std::vector<std::string> splitcommand2) {
 
     int pipefd[2];
 
     if (pipe(pipefd) == -1)
     {
         perror("\033[31mishell\033[0m");
-        return 1;
     }
 
     pid_t pid1 = fork();
 
     if (pid1 < 0) {
         std::cout << "Failed to fork process\n";
-        return 1;
     } else if (pid1 == 0) {
         if (dup2(pipefd[1], STDOUT_FILENO) == -1) {
             perror("\033[31mishell\033[0m");
@@ -81,7 +79,6 @@ int CommandHandler::executePipe(std::vector<std::string> splitcommand1, std::vec
 
     if (pid2 < 0) {
         std::cout << "Failed to fork process\n";
-        return 1;
     } else if (pid2 == 0) {
         if (dup2(pipefd[0], STDIN_FILENO) == -1) {
             perror("\033[31mishell\033[0m");
@@ -109,8 +106,6 @@ int CommandHandler::executePipe(std::vector<std::string> splitcommand1, std::vec
 
     waitpid(pid1, nullptr, 0);
     waitpid(pid2, nullptr, 0);
-
-    return 0;
 }
 
 void CommandHandler::executeInternalCommand(std::vector<std::string> splitcommand) {
@@ -134,8 +129,7 @@ void CommandHandler::executeInternalCommand(std::vector<std::string> splitcomman
             std::string var;
             std::string val;
             for (int i = 0; i < splitcommand[1].size(); i++) {
-                if (splitcommand.at(1)[i] == '=')
-                {
+                if (splitcommand.at(1)[i] == '=') {
                     afterEquals = true;
                 } else {
                     if (afterEquals == false) {
@@ -148,8 +142,7 @@ void CommandHandler::executeInternalCommand(std::vector<std::string> splitcomman
             setenv(var.c_str(), val.c_str(), 1);
         }
     } else if (splitcommand[0] == "history") {
-        if (!splitcommand[1].empty() && splitcommand[1] == "-n")
-        {
+        if (!splitcommand[1].empty() && splitcommand[1] == "-n") {
             std::stringstream output;
             HistoryHandler historyhandler;
             for (int i = 1; i <= std::stoi(splitcommand[2]); i++) {
@@ -164,8 +157,7 @@ void CommandHandler::executeInternalCommand(std::vector<std::string> splitcomman
 }
 
 bool CommandHandler::checkIfInternal(std::string input) {
-    if (input == "exit" || input == "help" || input == "cd" || input == "export" || input == "history")
-    {
+    if (input == "exit" || input == "help" || input == "cd" || input == "export" || input == "history") {
         return true;
     }
     return false;
@@ -179,8 +171,7 @@ void CommandHandler::executeCommand(std::string command) {
     std::stringstream command2;
 
     for (int i = 0; i < command.size(); i++) {
-        if (command[i] == '|')
-        {
+        if (command[i] == '|') {
             afterSymbol = true;
         } else {
             if (afterSymbol == false) {
@@ -194,8 +185,7 @@ void CommandHandler::executeCommand(std::string command) {
     std::vector<std::string> splitcommand1 = handleCommand(command1.str());
     std::vector<std::string> splitcommand2 = handleCommand(command2.str());
 
-    if (!splitcommand2.empty())
-    {
+    if (!splitcommand2.empty()) {
         executePipe(splitcommand1, splitcommand2);
     } else {
         if (!splitcommand1.empty()) {
@@ -206,5 +196,4 @@ void CommandHandler::executeCommand(std::string command) {
             }
         }
     }
-
 }

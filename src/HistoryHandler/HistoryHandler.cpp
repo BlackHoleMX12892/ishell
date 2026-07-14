@@ -32,16 +32,14 @@ void HistoryHandler::saveToFile(std::string input) {
         std::ofstream outputstream(file, std::ios::trunc);
 
         if (outputstream.is_open()) {
-            for (size_t i = lines - confighandler.maxcommands(); i < commands.size(); i++)
-            {
+            for (size_t i = lines - confighandler.maxcommands(); i < commands.size(); i++) {
                 outputstream << commands[i] << '\n';
             }
             outputstream.close();
         }
     }
     
-    if (!input.empty())
-    {
+    if (!input.empty()) {
         std::ofstream outputstream(file, std::ios::app);
 
         if (outputstream.is_open()) {
@@ -54,10 +52,8 @@ std::string HistoryHandler::getFromFile(int line) {
     std::ifstream inputstream(file);
     std::string output;
 
-    if (inputstream.is_open())
-    {
-        for (int i = 0; i < line; i++)
-        {
+    if (inputstream.is_open()) {
+        for (int i = 0; i < line; i++) {
             std::getline(inputstream, output);
         }
 
