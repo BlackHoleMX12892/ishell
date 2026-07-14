@@ -1,5 +1,4 @@
 #include "EnvHandler.hpp"
-#include "../ConfigHandler/ConfigHandler.hpp"
 
 void EnvHandler::setEnvFromConfig(std::vector<std::vector<std::string>> env) {
     for (size_t i = 0; i < env.size(); i++) {

@@ -5,6 +5,8 @@
 #include <iostream>
 #include <limits>
 
+std::string HistoryHandler::file = ".ishellhistory";
+
 void HistoryHandler::handleHome() {
     char* home = getenv("HOME");
     if (home != nullptr) {
@@ -15,7 +17,6 @@ void HistoryHandler::handleHome() {
 void HistoryHandler::saveToFile(std::string input) {
     int lines = linecount();
     ConfigHandler confighandler;
-    confighandler.handleConfigFile();
     
     if (lines >= confighandler.maxcommands() && confighandler.maxcommands() > 0) {
         std::ifstream inputstream(file);

@@ -8,6 +8,23 @@
 
 using namespace std::literals::string_literals;
 
+std::string ConfigHandler::file = ".ishellconfig.toml";
+toml::v3::ex::parse_result ConfigHandler::parsedconfigfile;
+
+void ConfigHandler::handleConfigFile() {
+    char* home = getenv("HOME");
+    if (home != nullptr) {
+        file = static_cast<std::string>(home) + "/" + file;
+    }
+
+    std::filesystem::path configFile = file.c_str();
+    if (std::filesystem::exists(configFile)) {
+        parsedconfigfile = toml::parse_file(file.c_str());
+    } else {
+        std::cout << rang::fg::yellow << "No config file has been detected, make sure you create a file named \"ishellconfig.toml\" under the home or working directory.\n" << rang::fg::reset;
+    }
+}
+
 int ConfigHandler::maxcommands() {
     int tempmaxcommands {50};
     auto* historytable = parsedconfigfile["history"].as_table();
@@ -54,18 +71,4 @@ std::vector<std::vector<std::string>> ConfigHandler::env() {
     }
 
     return tempenv;
-}
-
-void ConfigHandler::handleConfigFile() {
-    char* home = getenv("HOME");
-    if (home != nullptr) {
-        file = static_cast<std::string>(home) + "/" + file;
-    }
-
-    std::filesystem::path configFile = file.c_str();
-    if (std::filesystem::exists(configFile)) {
-        parsedconfigfile = toml::parse_file(file.c_str());
-    } else {
-        std::cout << rang::fg::yellow << "No config file has been detected, make sure you create a file named \"ishellconfig.toml\" under the home or working directory.\n" << rang::fg::reset;
-    }
 }

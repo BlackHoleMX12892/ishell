@@ -10,17 +10,17 @@
 
 int main() {
     ConfigHandler config;
-    config.handleConfigFile();
-    EnvHandler::setEnvFromConfig(config.env());
-    RCHandler::rcFromConfig(config.rc());
+    ConfigHandler::handleConfigFile();
+    HistoryHandler historyhandler;
+    HistoryHandler::handleHome();
+    EnvHandler::setEnvFromConfig(config.env()); // i shouldnt have to pass an argument
+    RCHandler::rcFromConfig(config.rc()); // here also i shouldn't have to pass an argument
+    LineEditor lineeditor;
+    CommandHandler commandhandler;
     while(true) {
         std::cout << "ishell v0.4.0 " << rang::fg::green << CWDHandler::getFormattedPath() << rang::fg::reset << " > " << std::flush;
-        LineEditor lineeditor;
         std::string command = lineeditor.readLine();
-        HistoryHandler historyhandler;
-        historyhandler.handleHome();
         historyhandler.saveToFile(command);
-        CommandHandler commandhandler;
         commandhandler.executeCommand(command);
     }
 }

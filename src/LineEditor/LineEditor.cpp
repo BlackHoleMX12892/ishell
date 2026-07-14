@@ -30,7 +30,6 @@ std::string LineEditor::readLine() {
     int position = 0;
     std::string command;
     HistoryHandler historyhandler;
-    historyhandler.handleHome();
     while (true)
     {
         ssize_t character = read(STDIN_FILENO, &c, 1);
