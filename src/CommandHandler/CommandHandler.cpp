@@ -126,8 +126,7 @@ void CommandHandler::executeInternalCommand(std::vector<std::string> splitcomman
             }
         }
     } else if (splitcommand[0] == "export") {
-        if (!splitcommand[1].empty())
-        {
+        if (splitcommand.size() > 1) {
             bool afterEquals = false;
             std::string var;
             std::string val;
@@ -145,13 +144,15 @@ void CommandHandler::executeInternalCommand(std::vector<std::string> splitcomman
             setenv(var.c_str(), val.c_str(), 1);
         }
     } else if (splitcommand[0] == "history") {
-        if (!splitcommand[1].empty() && splitcommand[1] == "-n") {
-            std::stringstream output;
-            HistoryHandler historyhandler;
-            for (int i = 1; i <= std::stoi(splitcommand[2]); i++) {
-                output << " " << i << " " << historyhandler.getPrevious() << '\n';
+        if (splitcommand.size() > 2) {
+            if (splitcommand[1] == "-n") {
+                std::stringstream output;
+                HistoryHandler historyhandler;
+                for (int i = 1; i <= std::stoi(splitcommand[2]); i++) {
+                    output << " " << i << " " << historyhandler.getPrevious() << '\n';
+                }
+                std::cout << output.str();
             }
-            std::cout << output.str();
         } else {
             std::cout << "History command:\n";
             std::cout << " -n [number] Print the last commands.\n";
