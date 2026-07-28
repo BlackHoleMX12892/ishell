@@ -38,6 +38,8 @@ add_executable(ishell
     src/HistoryHandler/HistoryHandler.hpp
     src/HistoryHandler/HistoryHandler.cpp
     src/CommandHandler/Lexer.hpp
-    src/CommandHandler/parser.hpp)
+    src/CommandHandler/parser.hpp
+    src/HostHandler/HostHandler.hpp
+    src/HostHandler/HostHandler.cpp)
 
 target_link_libraries(ishell PRIVATE tomlplusplus::tomlplusplus rang)

@@ -201,28 +201,32 @@ void CommandHandler::executeCommand(std::string command) {
             }
         }
     }*/
-    auto commandstructure = Parser::parse(command);
+    if (!command.empty()) {
+        auto commandstructure = Parser::parse(command);
 
-    std::vector<std::string> splitcommand1;
-    std::vector<std::string> splitcommand2;
-    int counter = 0;
-
-   for (std::vector<Command> pipeline : commandstructure) {
-        for (Command cmd : pipeline) {
-            if (pipeline.size() == 2) {
-                if (counter == 0) {
-                    splitcommand1 = cmd.command;
-                } else if (counter == 1) {
-                    splitcommand2 = cmd.command;
-                    executePipe(splitcommand1, splitcommand2);
-                }
-                
-                counter++;
-            } else {
-                if (checkIfInternal(cmd.command[0]) == true) {
-                    executeInternalCommand(cmd.command);
+        std::vector<std::string> splitcommand1;
+        std::vector<std::string> splitcommand2;
+        int counter = 0;
+        
+        //for the and token we should check whether to execute based on the other pipeline exit code
+        //might not implement that if it is too difficult
+        for (std::vector<Command> pipeline : commandstructure) {
+            for (Command cmd : pipeline) {
+                if (pipeline.size() == 2) {
+                    if (counter == 0) {
+                        splitcommand1 = cmd.command;
+                    } else if (counter == 1) {
+                        splitcommand2 = cmd.command;
+                        executePipe(splitcommand1, splitcommand2);
+                    }
+                    
+                    counter++;
                 } else {
-                    executeExternalCommand(cmd.command);
+                    if (checkIfInternal(cmd.command[0]) == true) {
+                        executeInternalCommand(cmd.command);
+                    } else {
+                        executeExternalCommand(cmd.command);
+                    }
                 }
             }
         }

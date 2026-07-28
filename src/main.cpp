@@ -7,6 +7,7 @@
 #include "CWDHandler/CWDHandler.hpp"
 #include "LineEditor/LineEditor.hpp"
 #include "HistoryHandler/HistoryHandler.hpp"
+#include "HostHandler/HostHandler.hpp"
 
 int main() {
     ConfigHandler config;
@@ -18,7 +19,7 @@ int main() {
     LineEditor lineeditor;
     CommandHandler commandhandler;
     while(true) {
-        std::cout << "ishell v0.3.2 " << rang::fg::green << CWDHandler::getFormattedPath() << rang::fg::reset << " > " << std::flush;
+        std::cout << HostHandler::getUser() << rang::fg::blue << "@" << rang::fg::green << HostHandler::getHost() << rang::fg::reset << " ishell v0.4.0 " << rang::fg::green << CWDHandler::getFormattedPath() << rang::fg::reset << " > " << std::flush;
         std::string command = lineeditor.readLine();
         historyhandler.saveToFile(command);
         commandhandler.executeCommand(command);
