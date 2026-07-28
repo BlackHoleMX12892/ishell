@@ -36,6 +36,8 @@ add_executable(ishell
     src/LineEditor/LineEditor.hpp
     src/LineEditor/LineEditor.cpp
     src/HistoryHandler/HistoryHandler.hpp
-    src/HistoryHandler/HistoryHandler.cpp)
+    src/HistoryHandler/HistoryHandler.cpp
+    src/CommandHandler/Lexer.hpp
+    src/CommandHandler/parser.hpp)
 
 target_link_libraries(ishell PRIVATE tomlplusplus::tomlplusplus rang)

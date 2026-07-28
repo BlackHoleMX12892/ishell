@@ -8,6 +8,7 @@
 #include <rang.hpp>
 #include <filesystem>
 #include "../HistoryHandler/HistoryHandler.hpp"
+#include "parser.hpp"
 
 std::vector<std::string> CommandHandler::handleCommand(std::string command) {
     std::stringstream commandstream(command);
@@ -19,7 +20,7 @@ std::vector<std::string> CommandHandler::handleCommand(std::string command) {
     }
 
     return splitcommand;
-}
+} // i might remove this
 
 void CommandHandler::executeExternalCommand(std::vector<std::string> splitcommand) {
     pid_t pid = fork();
@@ -168,9 +169,9 @@ bool CommandHandler::checkIfInternal(std::string input) {
 }
 
 void CommandHandler::executeCommand(std::string command) {
-    // temporal solution, need to implement something that can handle multiple cases like "echo $HOME"
+    // temporal solution, need to implement something that can handle multiple cases like "echo $HOME" - done
 
-    bool afterSymbol = false;
+    /*bool afterSymbol = false;
     std::stringstream command1;
     std::stringstream command2;
 
@@ -199,5 +200,32 @@ void CommandHandler::executeCommand(std::string command) {
                 executeExternalCommand(splitcommand1);
             }
         }
+    }*/
+    auto commandstructure = Parser::parse(command);
+
+    std::vector<std::string> splitcommand1;
+    std::vector<std::string> splitcommand2;
+    int counter = 0;
+
+   for (std::vector<Command> pipeline : commandstructure) {
+        for (Command cmd : pipeline) {
+            if (pipeline.size() == 2) {
+                if (counter == 0) {
+                    splitcommand1 = cmd.command;
+                } else if (counter == 1) {
+                    splitcommand2 = cmd.command;
+                    executePipe(splitcommand1, splitcommand2);
+                }
+                
+                counter++;
+            } else {
+                if (checkIfInternal(cmd.command[0]) == true) {
+                    executeInternalCommand(cmd.command);
+                } else {
+                    executeExternalCommand(cmd.command);
+                }
+            }
+        }
     }
 }
+
