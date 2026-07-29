@@ -3,4 +3,5 @@ ishell is a small shell project, which aims to build a modern and simple alterna
 This is a learning project.
 You can configure the shell with a TOML file, please refer to the Github wiki for more info.
 
+![ishell-v0.4.0](.github/assets/ishell-v0.4.0.png)
 ![arch-fastfetch](.github/assets/arch-fastfetch.png)
