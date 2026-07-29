@@ -8,7 +8,7 @@
 #include <rang.hpp>
 #include <filesystem>
 #include "../HistoryHandler/HistoryHandler.hpp"
-#include "parser.hpp"
+#include "Parser.hpp"
 
 /*std::vector<std::string> CommandHandler::handleCommand(std::string command) {
     std::stringstream commandstream(command);
@@ -219,8 +219,8 @@ void CommandHandler::executeCommand(std::string command) {
         int counter = 0;
         int lastexitcode {0};
         
-        //for the and token we should check whether to execute based on the other pipeline exit code
-        //might not implement that if it is too difficult
+        //for the and token we should check whether to execute based on the other pipeline exit code - done
+        //might not implement that if it is too difficult - it wasn't
         for (std::vector<Command> pipeline : commandstructure) {
             for (Command cmd : pipeline) {
                 if (pipeline.size() == 2) {
@@ -228,6 +228,7 @@ void CommandHandler::executeCommand(std::string command) {
                         splitcommand1 = cmd.command;
                     } else if (counter == 1) {
                         splitcommand2 = cmd.command;
+                        // I need to allow multiple command pipes
                         executePipe(splitcommand1, splitcommand2);
                     }
                     
