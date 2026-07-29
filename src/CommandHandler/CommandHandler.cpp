@@ -10,7 +10,7 @@
 #include "../HistoryHandler/HistoryHandler.hpp"
 #include "parser.hpp"
 
-std::vector<std::string> CommandHandler::handleCommand(std::string command) {
+/*std::vector<std::string> CommandHandler::handleCommand(std::string command) {
     std::stringstream commandstream(command);
     std::vector<std::string> splitcommand;
     std::string currentargument;
@@ -20,10 +20,11 @@ std::vector<std::string> CommandHandler::handleCommand(std::string command) {
     }
 
     return splitcommand;
-} // i might remove this
+}*/ // i might remove this
 
-void CommandHandler::executeExternalCommand(std::vector<std::string> splitcommand) {
+int CommandHandler::executeExternalCommand(std::vector<std::string> splitcommand) {
     pid_t pid = fork();
+    int exitcode = 0;
     if (pid < 0) {
         std::cout << "Failed to fork process\n";
     } else if (pid == 0) {
@@ -39,7 +40,8 @@ void CommandHandler::executeExternalCommand(std::vector<std::string> splitcomman
         perror("\033[31mishell\033[0m");
         std::exit(EXIT_FAILURE);
     }
-    waitpid(pid, nullptr, 0);
+    waitpid(pid, &exitcode, 0);
+    return exitcode;
 }
 
 void CommandHandler::executePipe(std::vector<std::string> splitcommand1, std::vector<std::string> splitcommand2) {
@@ -110,20 +112,24 @@ void CommandHandler::executePipe(std::vector<std::string> splitcommand1, std::ve
     waitpid(pid2, nullptr, 0);
 }
 
-void CommandHandler::executeInternalCommand(std::vector<std::string> splitcommand) {
+int CommandHandler::executeInternalCommand(std::vector<std::string> splitcommand) {
     if (splitcommand[0] == "exit") {
         std::cout << rang::fg::green << "Thank you for using ishell.\n" << rang::fg::reset;
         std::exit(EXIT_SUCCESS);
+        return 0;
     } else if (splitcommand[0] == "help") {
         std::cout << rang::fg::green << "Welcome to ishell help menu:\n" << rang::fg::reset;
         std::cout << "This is a shell designed as an alternative to the bourne-like shells.\n";
         std::cout << "Execute" << rang::fg::red << " \"exit\" " << rang::fg::reset << "to exit the shell.\n";
+        return 0;
     } else if (splitcommand[0] == "cd") {
         if (splitcommand.size() == 1) {
             chdir(getenv("HOME"));
+            return 0;
         } else {
             if (chdir(splitcommand[1].c_str()) == -1) {
                 perror("\033[31mishell\033[0m");
+                return 1;
             }
         }
     } else if (splitcommand[0] == "export") {
@@ -143,6 +149,7 @@ void CommandHandler::executeInternalCommand(std::vector<std::string> splitcomman
                 }
             }
             setenv(var.c_str(), val.c_str(), 1);
+            return 0;
         }
     } else if (splitcommand[0] == "history") {
         if (splitcommand.size() > 2) {
@@ -153,12 +160,15 @@ void CommandHandler::executeInternalCommand(std::vector<std::string> splitcomman
                     output << " " << i << " " << historyhandler.getPrevious() << '\n';
                 }
                 std::cout << output.str();
+                return 0;
             }
         } else {
             std::cout << "History command:\n";
             std::cout << " -n [number] Print the last commands.\n";
+            return 0;
         }
     }
+    return 1;
 }
 
 bool CommandHandler::checkIfInternal(std::string input) {
@@ -207,6 +217,7 @@ void CommandHandler::executeCommand(std::string command) {
         std::vector<std::string> splitcommand1;
         std::vector<std::string> splitcommand2;
         int counter = 0;
+        int lastexitcode {0};
         
         //for the and token we should check whether to execute based on the other pipeline exit code
         //might not implement that if it is too difficult
@@ -223,11 +234,14 @@ void CommandHandler::executeCommand(std::string command) {
                     counter++;
                 } else {
                     if (checkIfInternal(cmd.command[0]) == true) {
-                        executeInternalCommand(cmd.command);
+                        lastexitcode = executeInternalCommand(cmd.command);
                     } else {
-                        executeExternalCommand(cmd.command);
+                        lastexitcode = executeExternalCommand(cmd.command);
                     }
                 }
+            }
+            if (lastexitcode != 0) {
+                break;
             }
         }
     }
