@@ -169,21 +169,53 @@ int CommandHandler::executeInternalCommand(std::vector<std::string> splitcommand
             return 0;
         }
     } else if (splitcommand[0] == "history") {
-        if (splitcommand.size() > 2) {
+        if (splitcommand.size() >= 2) {
             if (splitcommand[1] == "-n") {
                 std::stringstream output;
                 HistoryHandler historyhandler;
-                for (int i = 1; i <= std::stoi(splitcommand[2]); i++) {
-                    output << " " << i << " " << historyhandler.getPrevious() << '\n';
+                try {
+                    for (int i = 1; i <= std::stoi(splitcommand[2]); i++) {
+                        output << " " << i << " " << historyhandler.getPrevious() << '\n';
+                    }
+                    std::cout << output.str();
+                    return 0;
+                } catch (const std::invalid_argument& e) {
+                    std::cerr << rang::fg::red << "ishell: invalid argument.\n" << rang::fg::reset;
+                    return 1;
+                } catch (const std::out_of_range& e) {
+                    std::cerr << rang::fg::red << "ishell: out of range.\n" << rang::fg::reset;
+                    return 1;
                 }
-                std::cout << output.str();
+            } else if (splitcommand[1] == "clear") {
+                HistoryHandler historyhandler;
+                historyhandler.clear();
                 return 0;
+            } else if (splitcommand.size() == 2) {
+                std::stringstream output;
+                HistoryHandler historyhandler;
+                try {
+                    for (int i = 1; i <= std::stoi(splitcommand[1]); i++) {
+                        output << " " << i << " " << historyhandler.getPrevious() << '\n';
+                    }
+                    std::cout << output.str();
+                    return 0;
+                } catch (const std::invalid_argument& e) {
+                    std::cerr << "ishell: invalid argument.\n";
+                    return 1;
+                } catch (const std::out_of_range& e) {
+                    std::cerr << "ishell: out of range.\n";
+                    return 1;
+                }
             }
         } else {
             std::cout << "History command:\n";
-            std::cout << " -n [number] Print the last commands.\n";
+            std::cout << "history [number]\n";
+            std::cout << " -n [number] Print the last n commands.\n";
+            std::cout << " clear Clear your entire history.\n";
             return 0;
         }
+        std::cerr << "ishell: unknown argument.\n";
+        return 1;
     }
     return 1;
 }

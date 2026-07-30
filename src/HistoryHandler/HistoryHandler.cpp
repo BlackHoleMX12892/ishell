@@ -4,6 +4,7 @@
 #include <fstream>
 #include <iostream>
 #include <limits>
+#include "rang.hpp"
 
 std::string HistoryHandler::file = ".ishellhistory";
 
@@ -11,6 +12,17 @@ void HistoryHandler::handleHome() {
     char* home = getenv("HOME");
     if (home != nullptr) {
         file = static_cast<std::string>(home) + "/" + file;
+    }
+}
+
+void HistoryHandler::clear() {
+    std::ofstream outputstream(file, std::ios::out | std::ios::trunc);
+
+    if (outputstream.is_open()) {
+        std::cout << rang::fg::green << "ishell: history cleared succesfully.\n" << rang::fg::reset;
+        outputstream.close();
+    } else {
+        std::cerr << rang::fg::red << "ishell: failed to clear history.\n" << rang::fg::reset;
     }
 }
 

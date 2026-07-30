@@ -14,6 +14,7 @@ public:
     void saveToFile(std::string input);
     std::string getPrevious();
     std::string getNext();
+    void clear();
 };
 
 //todo: move the homehandling to a separate header, maybe could use a virtual member so it supports multiple files, maybe even a file handler, I don't know - discarded
