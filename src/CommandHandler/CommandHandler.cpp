@@ -134,10 +134,19 @@ int CommandHandler::executeInternalCommand(std::vector<std::string> splitcommand
         std::cout << rang::fg::green << "Thank you for using ishell.\n" << rang::fg::reset;
         std::exit(EXIT_SUCCESS);
         return 0;
+    } else if (splitcommand[0] == "builtins") {
+        std::cout << "ishell built-in command list:\n";
+        std::cout << " builtins - print this menu.\n";
+        std::cout << " exit - exit the shell.\n";
+        std::cout << " help - print the shells help menu.\n";
+        std::cout << " cd - change directory.\n";
+        std::cout << " export - export an environment variable.\n";
+        std::cout << " history - interact with the shells history module.\n";
     } else if (splitcommand[0] == "help") {
         std::cout << rang::fg::green << "Welcome to ishell help menu:\n" << rang::fg::reset;
-        std::cout << "This is a shell designed as an alternative to the bourne-like shells.\n";
-        std::cout << "Execute" << rang::fg::red << " \"exit\" " << rang::fg::reset << "to exit the shell.\n";
+        std::cout << " This is a shell designed as an alternative to the bourne-like shells.\n";
+        std::cout << " To see a list of built-in commands execute: \"builtins\".\n";
+        std::cout << " Execute" << rang::fg::red << " \"exit\" " << rang::fg::reset << "to exit the shell.\n";
         return 0;
     } else if (splitcommand[0] == "cd") {
         if (splitcommand.size() == 1) {
@@ -221,7 +230,7 @@ int CommandHandler::executeInternalCommand(std::vector<std::string> splitcommand
 }
 
 bool CommandHandler::checkIfInternal(std::string input) {
-    if (input == "exit" || input == "help" || input == "cd" || input == "export" || input == "history") {
+    if (input == "exit" || input == "help" || input == "cd" || input == "export" || input == "history" || input == "builtins") {
         return true;
     }
     return false;
