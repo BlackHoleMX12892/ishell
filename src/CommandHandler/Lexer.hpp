@@ -15,7 +15,7 @@ struct Token {
 };
 
 namespace Lexer {
-    std::vector<Token> tokenize(std::string command) {
+    inline std::vector<Token> tokenize(std::string command) {
         std::vector<Token> temp {};
         bool isQuoted = false;
         char currentquote;

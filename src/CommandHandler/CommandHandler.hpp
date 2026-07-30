@@ -1,12 +1,13 @@
 #pragma once
 #include <vector>
 #include <string>
+#include "Parser.hpp"
 
 class CommandHandler {
 private:
     std::vector<std::string> handleCommand(std::string command);
     int executeExternalCommand(std::vector<std::string> splitcommand);
-    void executePipe(std::vector<std::string> splitcommand1, std::vector<std::string> splitcommand2);
+    int executePipe(std::vector<Command> pipeline);
     int executeInternalCommand(std::vector<std::string> splitcommand);
     bool checkIfInternal(std::string input);
 public:

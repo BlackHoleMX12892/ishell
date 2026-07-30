@@ -22,6 +22,10 @@
     return splitcommand;
 }*/ // i might remove this
 
+struct PipeObject {
+    int pipefd[2];
+};
+
 int CommandHandler::executeExternalCommand(std::vector<std::string> splitcommand) {
     pid_t pid = fork();
     int exitcode = 0;
@@ -44,72 +48,85 @@ int CommandHandler::executeExternalCommand(std::vector<std::string> splitcommand
     return exitcode;
 }
 
-void CommandHandler::executePipe(std::vector<std::string> splitcommand1, std::vector<std::string> splitcommand2) {
+int CommandHandler::executePipe(std::vector<Command> pipeline) {
+    // I need to fix this - done
 
-    int pipefd[2];
+    std::vector<PipeObject> pipes;
+    std::vector<pid_t> processes;
 
-    if (pipe(pipefd) == -1)
-    {
-        perror("\033[31mishell\033[0m");
+    for (size_t i = 0; i < pipeline.size() - 1; i++) {
+        PipeObject temp;
+        pipes.push_back(temp);
     }
 
-    pid_t pid1 = fork();
+    for (size_t i = 0; i < pipeline.size() - 1; i++) {
+        if (pipe(pipes[i].pipefd) < 0) {
+            perror("\033[31mishell\033[0m");
+            return 1;
+        }
+    }
 
-    if (pid1 < 0) {
-        std::cout << "Failed to fork process\n";
-    } else if (pid1 == 0) {
-        if (dup2(pipefd[1], STDOUT_FILENO) == -1) {
+    for (size_t i = 0; i < pipeline.size(); i++) {
+        pid_t pid = fork();
+
+        if (pid < 0) {
+            std::cout << "Failed to fork process\n";
+            return 1;
+        } else if (pid == 0) {
+            //child process
+
+            if (i > 0) {
+                if (dup2(pipes[i - 1].pipefd[0], STDIN_FILENO) < 0) {
+                    perror("\033[31mishell\033[0m");
+                    std::exit(EXIT_FAILURE);
+                }
+            }
+
+            if (i < pipeline.size() - 1) {
+                if (dup2(pipes[i].pipefd[1], STDOUT_FILENO) < 0) {
+                    perror("\033[31mishell\033[0m");
+                    std::exit(EXIT_FAILURE);
+                }
+            }
+
+            // I thoght you had to close all ends except the ones wired to the process, but no, you actually close all
+            // that is why dup2 duplicates the file descriptor
+
+            for (size_t x = 0; x < pipes.size(); x++) {
+                close(pipes[x].pipefd[1]);
+                close(pipes[x].pipefd[0]);
+            }
+            
+            std::vector<char*> arguments;
+
+            for (size_t y = 0; y < pipeline[i].command.size(); y++) {
+                arguments.push_back(const_cast<char*>(pipeline[i].command[y].c_str()));
+            }
+            arguments.push_back(nullptr);
+
+            execvp(arguments[0], arguments.data());
+
+            // if we reach the next code something was wrong with execvp obviously, as it completely replaces the execution
+
             perror("\033[31mishell\033[0m");
             std::exit(EXIT_FAILURE);
         }
 
-        close(pipefd[0]);
-        close(pipefd[1]);
-
-        std::vector<char*> arguments;
-        
-        for (size_t i = 0; i < splitcommand1.size(); i++) {
-            arguments.push_back(const_cast<char*>(splitcommand1[i].c_str()));
-        }
-        arguments.push_back(nullptr);
-
-        execvp(arguments[0], arguments.data());
-
-        perror("\033[31mishell\033[0m");
-        std::exit(EXIT_FAILURE);
+        processes.push_back(pid);
     }
 
-    pid_t pid2 = fork();
-
-    if (pid2 < 0) {
-        std::cout << "Failed to fork process\n";
-    } else if (pid2 == 0) {
-        if (dup2(pipefd[0], STDIN_FILENO) == -1) {
-            perror("\033[31mishell\033[0m");
-            std::exit(EXIT_FAILURE);
-        }
-
-        close(pipefd[0]);
-        close(pipefd[1]);
-
-        std::vector<char*> arguments;
-        
-        for (size_t i = 0; i < splitcommand2.size(); i++) {
-            arguments.push_back(const_cast<char*>(splitcommand2[i].c_str()));
-        }
-        arguments.push_back(nullptr);
-
-        execvp(arguments[0], arguments.data());
-
-        perror("\033[31mishell\033[0m");
-        std::exit(EXIT_FAILURE);
+    for (size_t i = 0; i < pipes.size(); i++) {
+        close(pipes[i].pipefd[1]);
+        close(pipes[i].pipefd[0]);
     }
+
+    int exitcode {0};
     
-    close(pipefd[0]);
-    close(pipefd[1]);
+    for (pid_t pid : processes) {
+        waitpid(pid, &exitcode, 0);
+    }
 
-    waitpid(pid1, nullptr, 0);
-    waitpid(pid2, nullptr, 0);
+    return exitcode;
 }
 
 int CommandHandler::executeInternalCommand(std::vector<std::string> splitcommand) {
@@ -214,25 +231,15 @@ void CommandHandler::executeCommand(std::string command) {
     if (!command.empty()) {
         auto commandstructure = Parser::parse(command);
 
-        std::vector<std::string> splitcommand1;
-        std::vector<std::string> splitcommand2;
-        int counter = 0;
         int lastexitcode {0};
         
         //for the and token we should check whether to execute based on the other pipeline exit code - done
         //might not implement that if it is too difficult - it wasn't
         for (std::vector<Command> pipeline : commandstructure) {
             for (Command cmd : pipeline) {
-                if (pipeline.size() == 2) {
-                    if (counter == 0) {
-                        splitcommand1 = cmd.command;
-                    } else if (counter == 1) {
-                        splitcommand2 = cmd.command;
-                        // I need to allow multiple command pipes
-                        executePipe(splitcommand1, splitcommand2);
-                    }
-                    
-                    counter++;
+                if (pipeline.size() >= 2) {
+                    lastexitcode = executePipe(pipeline);
+                    break;
                 } else {
                     if (checkIfInternal(cmd.command[0]) == true) {
                         lastexitcode = executeInternalCommand(cmd.command);

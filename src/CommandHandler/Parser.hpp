@@ -13,7 +13,7 @@ struct Command {
 };
 
 namespace Parser {
-    std::vector<std::vector<Command>> parse(std::string command) {
+    inline std::vector<std::vector<Command>> parse(std::string command) {
         std::vector<std::vector<Command>> commandstructure;
         std::vector<Token> commandtokens = Lexer::tokenize(command);
         Command currentcommand;
